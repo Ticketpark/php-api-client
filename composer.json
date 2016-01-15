@@ -1,0 +1,19 @@
+{
+    "name": "ticketpark/php-api-client",
+    "description": "A PHP client to use the Ticketpark API",
+    "type": "library",
+    "require": {
+        "kriswallsmith/buzz": "^0.15.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ticketpark",
+            "email": "tech@ticketpark.ch"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": { "Ticketpark\\ApiClient\\": "lib/ApiClient" }
+    }
+}
