@@ -219,9 +219,14 @@ class TicketparkApiClient
      * @param array $headers
      * @return \Buzz\Message\Response
      */
-    public function head($path, $headers = array())
+    public function head($path, $parameters = array(), $headers = array())
     {
-        return $this->getBrowser()->head(self::ROOT_URL . $path, $this->getDefaultHeaders($headers));
+        $params = '';
+        if (count($parameters)) {
+            $params = '?' . http_build_query($parameters);
+        }
+
+        return $this->getBrowser()->head(self::ROOT_URL . $path . $params, $this->getDefaultHeaders($headers));
     }
 
     /**
