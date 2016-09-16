@@ -185,12 +185,18 @@ class TicketparkApiClient
      * GET
      *
      * @param string $path
+     * @param array $parameters
      * @param array $headers
-     * @return \Buzz\Message\MessageInterface
+     * @return \Buzz\Message\Response
      */
-    public function get($path, $headers = array())
+    public function get($path, $parameters = array(), $headers = array())
     {
-        return $this->getBrowser()->get(self::ROOT_URL . $path, $this->getDefaultHeaders($headers));
+        $params = '';
+        if (count($parameters)) {
+            $params = '?' . http_build_query($parameters);
+        }
+
+        return $this->getBrowser()->get(self::ROOT_URL . $path . $params, $this->getDefaultHeaders($headers));
     }
 
     /**
@@ -199,7 +205,7 @@ class TicketparkApiClient
      * @param string $path
      * @param string $content
      * @param array $headers
-     * @return \Buzz\Message\MessageInterface
+     * @return \Buzz\Message\Response
      */
     public function post($path, $content = '', $headers = array())
     {
@@ -211,7 +217,7 @@ class TicketparkApiClient
      *
      * @param string $path
      * @param array $headers
-     * @return \Buzz\Message\MessageInterface
+     * @return \Buzz\Message\Response
      */
     public function head($path, $headers = array())
     {
@@ -224,7 +230,7 @@ class TicketparkApiClient
      * @param string $path
      * @param string $content
      * @param array $headers
-     * @return \Buzz\Message\MessageInterface
+     * @return \Buzz\Message\Response
      */
     public function patch($path, $content = '', $headers = array())
     {
@@ -249,7 +255,7 @@ class TicketparkApiClient
      *
      * @param string $path
      * @param array $headers
-     * @return \Buzz\Message\MessageInterface
+     * @return \Buzz\Message\Response
      */
     public function delete($path, $headers = array())
     {

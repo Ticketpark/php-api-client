@@ -17,7 +17,7 @@ $client->setUserCredentials('your@username.com', 'yourPassword');
 // or $client->setRefreshTokenInstance($string, $expiration);
 
 // 3. Execute the desired command
-$response = $client->get('/events/');
+$response = $client->get('/events/', array('maxResults' => 2));
 
 // 4. Handle the response
 //    It is an instance of Buzz\Message\Response
