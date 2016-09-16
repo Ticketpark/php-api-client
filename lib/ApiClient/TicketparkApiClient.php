@@ -298,6 +298,7 @@ class TicketparkApiClient
 
         if (!$accessToken || ($accessToken->getExpiration()->getTimestamp() < (time() + 10))) {
             $this->generateTokens();
+            $accessToken = $this->getAccessToken();
         }
 
         return $accessToken->getToken();
