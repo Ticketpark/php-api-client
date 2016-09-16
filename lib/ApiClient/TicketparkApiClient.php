@@ -3,11 +3,23 @@
 namespace Ticketpark\ApiClient;
 
 use Buzz\Browser;
+use Buzz\Message\Response;
+use Ticketpark\ApiClient\Exception\TokenGenerationException;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
 
 class TicketparkApiClient
 {
+    /**
+     * @const string ROOT_URL
+     */
+    const ROOT_URL = 'https://api.ticketpark.ch';
+
+    /**
+     * @const int REFRESH_TOKEN_LIFETIME
+     */
+    const REFRESH_TOKEN_LIFETIME = 30 * 86400;
+
     /**
      * @var string $apiKey
      */
@@ -42,16 +54,6 @@ class TicketparkApiClient
      * @var AccessToken
      */
     protected $accessToken;
-
-    /**
-     * @const string ROOT_URL
-     */
-    const ROOT_URL = 'https://api.ticketpark.ch';
-
-    /**
-     * @const int REFRESH_TOKEN_LIFETIME
-     */
-    const REFRESH_TOKEN_LIFETIME = 30 * 86400;
 
     /**
      * Constructor
@@ -117,14 +119,27 @@ class TicketparkApiClient
     }
 
     /**
-     * Set access token
+     * Set access token object
      *
      * @param AccessToken $accessToken
      * @return $this
      */
-    public function setAccessToken(AccessToken $accessToken)
+    public function setAccessTokenInstance(AccessToken $accessToken)
     {
         $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * Set access token
+     *
+     * @param string $accessToken
+     * @return $this
+     */
+    public function setAccessToken($accessToken)
+    {
+        $this->accessToken = new AccessToken($accessToken);
 
         return $this;
     }
@@ -140,14 +155,28 @@ class TicketparkApiClient
     }
 
     /**
+     * Set refresh token object
+     *
+     * @param RefreshToken $refreshToken
+     * @return $this
+     */
+    public function setRefreshTokenInstance(RefreshToken $refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+
+    /**
      * Set refresh token
      *
      * @param RefreshToken $refreshToken
      * @return $this
      */
-    public function setRefreshToken(RefreshToken $refreshToken)
+    public function setRefreshToken($refreshToken)
     {
-        $this->refreshToken = $refreshToken;
+        $this->refreshToken = new RefreshToken($refreshToken);
 
         return $this;
     }
@@ -228,38 +257,84 @@ class TicketparkApiClient
     }
 
     /**
-     * Generate tokens
+     * Generate new tokens
      *
-     * @throws \Exception
+     * @throws TokenGenerationException
      */
     public function generateTokens()
     {
-        // Refresh token available?
-        if ($refreshToken = $this->getRefreshToken()) {
-            if (!$refreshToken->getExpiration() || $refreshToken->getExpiration()->getTimestamp() > (time() + 10)) {
-                $data = array(
-                    'refresh_token' => $refreshToken->getToken(),
-                    'grant_type' => 'refresh_token'
-                );
+        // Try with refresh token
+        $refreshToken = $this->getRefreshToken();
+        if ($refreshToken && !$refreshToken->hasExpired()) {
+            $data = array(
+                'refresh_token' => $refreshToken->getToken(),
+                'grant_type' => 'refresh_token'
+            );
+
+            if ($this->doGenerateTokens($data)) {
+                return;
             }
         }
 
-        // If there is no refresh token, use username and password, if available
-        if(!isset($data) && $this->username){
-
+        // Try with user credentials
+        if (!isset($data) && $this->username) {
             $data = array(
                 'username' => $this->username,
                 'password' => $this->password,
                 'grant_type' => 'password'
             );
+
+            if ($this->doGenerateTokens($data)) {
+                return;
+            }
         }
 
-        if (!isset($data)) {
+        throw new TokenGenerationException('Failed to generate a access tokens. Make sure to provide a valid refresh token or user credentials.');
+    }
 
-            throw new \Exception('You must provide either a valid access token, a valid refresh token or user credentials.');
+    /**
+     * Get headers
+     *
+     * @return array
+     */
+    protected function getDefaultHeaders($customHeaders = array())
+    {
+        $headers = array(
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' .  $this->getValidAccessToken()
+        );
+
+        return array_merge($customHeaders, $headers);
+    }
+
+    /**
+     * Get a valid access token
+     *
+     * @return string
+     */
+    protected function getValidAccessToken()
+    {
+        $accessToken = $this->getAccessToken();
+
+        if (!$accessToken || $accessToken->hasExpired()) {
+            $this->generateTokens();
+            $accessToken = $this->getAccessToken();
         }
 
-        // Generate access token
+        return $accessToken->getToken();
+    }
+
+    /**
+     * Actually tries to generate tokens.
+     *
+     * Returns whether token generation has been successful.
+     *
+     * @param array $data
+     * @return bool
+     */
+    protected function doGenerateTokens(array $data)
+    {
         $headers = array(
             'Content-Type'  => 'application/x-www-form-urlencoded',
             'Accept'        => 'application/json',
@@ -281,43 +356,9 @@ class TicketparkApiClient
                 (new \DateTime())->setTimestamp(time() + self::REFRESH_TOKEN_LIFETIME)
             );
 
-        } else {
-
-            throw new \Exception('Generating access token failed.');
-        }
-    }
-
-    /**
-     * Get valid access token based on available data
-     *
-     * @return string
-     */
-    protected function getValidAccessToken()
-    {
-        $accessToken = $this->getAccessToken();
-
-        if (!$accessToken || ($accessToken->getExpiration()->getTimestamp() < (time() + 10))) {
-            $this->generateTokens();
-            $accessToken = $this->getAccessToken();
+            return true;
         }
 
-        return $accessToken->getToken();
-
-    }
-
-    /**
-     * Get headers
-     *
-     * @return array
-     */
-    protected function getDefaultHeaders($customHeaders = array())
-    {
-        $headers = array(
-            'Content-Type' => 'application/x-www-form-urlencoded',
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' .  $this->getValidAccessToken()
-        );
-
-        return array_merge($headers, $customHeaders);
+        return false;
     }
 }

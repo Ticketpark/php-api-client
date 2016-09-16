@@ -2,16 +2,25 @@
 
 include('vendor/autoload.php');
 
-// Create client
+// 1. Create client
 $client = new \Ticketpark\ApiClient\TicketparkApiClient('yourApiKey', 'yourApiSecret');
 
-// You need a user to login
-$client->setUserCredentials('some@username', 'somePassword');
+// 2a. Set your user credentials
+$client->setUserCredentials('your@username.com', 'yourPassword');
 
-// Execute the desired command
+// 2b. If possible, set one or both existing tokens
+//     With frequent requests, re-using tokens results in less api requests than using user credentials only.
+//
+// $client->setAccessToken('someAccessTokenString');
+// or $client->setAccessTokenInstance(new AccessToken($string, $expiration));
+// $client->setRefreshToken('someRefreshToken');
+// or $client->setRefreshTokenInstance($string, $expiration);
+
+// 3. Execute the desired command
 $response = $client->get('/events/');
 
-//Handle the response
+// 4. Handle the response
+//    It is an instance of Buzz\Message\Response
 if ($response->isSuccessful()) {
     print "<strong>Request successful!</strong><br>";
     $events = json_decode($response->getContent(), true);
@@ -20,3 +29,7 @@ if ($response->isSuccessful()) {
         print $event['name']."<br>";
     }
 }
+
+// 5. Get the tokens and store them to use them again later on
+$myAccessToken  = $client->getAccessToken();
+$myRefreshToken = $client->getRefreshToken();
