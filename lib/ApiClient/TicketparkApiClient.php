@@ -102,6 +102,8 @@ class TicketparkApiClient
     {
         $this->username = $username;
         $this->password = $password;
+
+        return $this;
     }
 
     /**
