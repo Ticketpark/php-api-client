@@ -3,7 +3,6 @@
 namespace Ticketpark\ApiClient;
 
 use Buzz\Browser;
-use Buzz\Message\Response;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
