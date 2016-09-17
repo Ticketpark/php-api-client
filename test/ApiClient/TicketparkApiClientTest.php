@@ -26,14 +26,6 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('testBrowser', $this->apiClient->getBrowser()->getTestName());
     }
 
-    /**
-     * @expectedException TypeError
-     */
-    public function testSetInvalidBrowser()
-    {
-        $this->apiClient->setBrowser(new \stdClass());
-    }
-
     public function testSetAccessToken()
     {
         $this->apiClient->setAccessToken('foo');
@@ -51,14 +43,6 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $this->apiClient->getAccessToken()->getToken());
     }
 
-    /**
-     * @expectedException TypeError
-     */
-    public function testSetInvalidAccessTokenInstance()
-    {
-        $this->apiClient->setAccessTokenInstance(new \stdClass());
-    }
-
     public function testSetRefreshToken()
     {
         $this->apiClient->setRefreshToken('foo');
@@ -74,14 +58,6 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Ticketpark\ApiClient\Token\RefreshToken', $this->apiClient->getRefreshToken());
         $this->assertEquals('bar', $this->apiClient->getRefreshToken()->getToken());
-    }
-
-    /**
-     * @expectedException TypeError
-     */
-    public function testSetInvalidRefreshTokenInstance()
-    {
-        $this->apiClient->setRefreshTokenInstance(new \stdClass());
     }
 
     /**
@@ -392,7 +368,7 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
 
     protected function getResponseMock($status, $content)
     {
-        $response = $this->getMockBuilder('Buzz\Browser\Message\Response')
+        $response = $this->getMockBuilder('Buzz\Message\Response')
             ->setMethods(array('getStatusCode', 'getContent'))
             ->getMock();
 
