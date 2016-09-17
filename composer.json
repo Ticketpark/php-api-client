@@ -3,6 +3,7 @@
     "description": "A PHP client to use the Ticketpark API",
     "type": "library",
     "require": {
+        "php": ">=5.6",
         "kriswallsmith/buzz": "^0.15.0"
     },
     "license": "MIT",
