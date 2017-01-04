@@ -194,7 +194,7 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows?a=1&b=2&c%5Bd%5D=3'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'
@@ -220,7 +220,7 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows?a=1&b=2&c%5Bd%5D=3'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'
@@ -246,12 +246,12 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows/foo'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'
                     )),
-                    $this->equalTo('content')
+                    $this->equalTo('"content"')
                 ),
                 'response' => array(
                     'status' => 200,
@@ -273,12 +273,12 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows/foo'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'
                     )),
-                    $this->equalTo('content')
+                    $this->equalTo('"content"')
                 ),
                 'response' => array(
                     'status' => 200,
@@ -300,12 +300,12 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows/foo'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'
                     )),
-                    $this->equalTo('content')
+                    $this->equalTo('"content"')
                 ),
                 'response' => array(
                     'status' => 200,
@@ -327,7 +327,7 @@ class TicketparkApiClientTest extends \PHPUnit_Framework_TestCase
                 'with' => array(
                     $this->equalTo('https://api.ticketpark.ch/shows/foo'),
                     $this->equalTo(array(
-                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer myAccessToken',
                         'CustomHeader' => 'foo'

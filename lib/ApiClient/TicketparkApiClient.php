@@ -208,7 +208,7 @@ class TicketparkApiClient
      */
     public function post($path, $content = '', $headers = array())
     {
-        return $this->getBrowser()->post(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), $content);
+        return $this->getBrowser()->post(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), json_encode($content));
     }
 
     /**
@@ -238,7 +238,7 @@ class TicketparkApiClient
      */
     public function patch($path, $content = '', $headers = array())
     {
-        return $this->getBrowser()->patch(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), $content);
+        return $this->getBrowser()->patch(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), json_encode($content));
     }
 
     /**
@@ -251,7 +251,7 @@ class TicketparkApiClient
      */
     public function put($path, $content = '', $headers = array())
     {
-        return $this->getBrowser()->put(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), $content);
+        return $this->getBrowser()->put(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), json_encode($content));
     }
 
     /**
@@ -310,7 +310,7 @@ class TicketparkApiClient
     protected function getDefaultHeaders($customHeaders = array())
     {
         $headers = array(
-            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' .  $this->getValidAccessToken()
         );
