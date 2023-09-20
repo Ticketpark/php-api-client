@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false" bootstrap="vendor/autoload.php" colors="true">
-    <testsuites>
-        <testsuite name="Ticketpark Api Client Suite">
-            <directory suffix="Test.php">./test/ApiClient/</directory>
-        </testsuite>
-    </testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd">
+  <coverage/>
+  <testsuites>
+    <testsuite name="Ticketpark PHP Api Client">
+      <directory>./test</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>
