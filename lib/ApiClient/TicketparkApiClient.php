@@ -86,7 +86,7 @@ class TicketparkApiClient
         return $this->getBrowser()->get(self::ROOT_URL . $path . $params, $this->getDefaultHeaders($headers));
     }
 
-    public function post(string $path, string $content = '', array $headers = []): Response
+    public function post(string $path, mixed $content = '', array $headers = []): Response
     {
         return $this->getBrowser()->post(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), json_encode($content, JSON_THROW_ON_ERROR));
     }
@@ -101,7 +101,7 @@ class TicketparkApiClient
         return $this->getBrowser()->head(self::ROOT_URL . $path . $params, $this->getDefaultHeaders($headers));
     }
 
-    public function patch(string $path, string $content = '', array $headers = []): Response
+    public function patch(string $path, mixed $content = '', array $headers = []): Response
     {
         return $this->getBrowser()->patch(self::ROOT_URL . $path, $this->getDefaultHeaders($headers), json_encode($content, JSON_THROW_ON_ERROR));
     }
