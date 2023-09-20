@@ -9,7 +9,7 @@ abstract class Token
     public function __construct(
         private readonly string $token,
         private readonly ?\DateTime $expiration = null
-    ){
+    ) {
     }
 
     public function getToken(): string
