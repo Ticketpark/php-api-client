@@ -4,75 +4,25 @@ namespace Ticketpark\ApiClient\Token;
 
 abstract class Token
 {
-    /**
-     * Seconds to consider token as expired before it actually expires
-     *
-     * @const int TIMEOUT_BUFFER
-     */
-    const TIMEOUT_BUFFER = 10;
+    private const TIMEOUT_BUFFER = 10;
 
-    /**
-     * @var string $token
-     */
-    protected $token;
+    public function __construct(
+        private readonly string $token,
+        private readonly ?\DateTime $expiration = null
+    ){
+    }
 
-    /**
-     * @var \DateTime
-     */
-    protected $expiration;
-
-    /**
-     * @return string
-     */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
 
-    /**
-     * @param string|null $token
-     * @param \DateTime|null $expiration
-     */
-    public function __construct($token = null, \DateTime $expiration = null)
-    {
-        $this->token = $token;
-        $this->expiration = $expiration;
-    }
-
-    /**
-     * @param string $token
-     * @return Token
-     */
-    public function setToken($token)
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExpiration()
+    public function getExpiration(): ?\DateTime
     {
         return $this->expiration;
     }
 
-    /**
-     * @param \DateTime $expiration
-     * @return Token
-     */
-    public function setExpiration(\DateTime $expiration)
-    {
-        $this->expiration = $expiration;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasExpired()
+    public function hasExpired(): bool
     {
         if (null == $this->getExpiration()) {
 
