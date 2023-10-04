@@ -12,9 +12,7 @@ $client->setUserCredentials('your@username.com', 'yourPassword');
 //     With frequent requests, re-using tokens results in less api requests than using user credentials only.
 //
 // $client->setAccessToken('someAccessTokenString');
-// or $client->setAccessTokenInstance(new AccessToken($string, $expiration));
 // $client->setRefreshToken('someRefreshToken');
-// or $client->setRefreshTokenInstance($string, $expiration);
 
 // 3. Execute the desired command
 $response = $client->get('/events/', array('maxResults' => 2));
