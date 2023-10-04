@@ -2,8 +2,6 @@
 
 namespace Ticketpark\ApiClient\Test;
 
-use Buzz\Browser;
-use Buzz\Message\Response;
 use PHPUnit\Framework\TestCase;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
 use Ticketpark\ApiClient\TicketparkApiClient;
@@ -18,28 +16,12 @@ class TicketparkApiClientTest extends TestCase
     {
         $this->apiClient = new TicketparkApiClient('apiKey', 'apiSecret');
     }
-
-    public function testDefaultBrowser()
-    {
-        $this->assertInstanceOf(Browser::class, $this->apiClient->getBrowser());
-    }
-
     public function testSetAccessToken()
     {
         $this->apiClient->setAccessToken('foo');
         $this->assertInstanceOf(AccessToken::class, $this->apiClient->getAccessToken());
         $this->assertEquals('foo', $this->apiClient->getAccessToken()->getToken());
     }
-
-    public function testSetAccessTokenInstance()
-    {
-        $accessToken = new AccessToken('bar');
-        $this->apiClient->setAccessTokenInstance($accessToken);
-
-        $this->assertInstanceOf(AccessToken::class, $this->apiClient->getAccessToken());
-        $this->assertEquals('bar', $this->apiClient->getAccessToken()->getToken());
-    }
-
     public function testSetRefreshToken()
     {
         $this->apiClient->setRefreshToken('foo');
@@ -47,16 +29,7 @@ class TicketparkApiClientTest extends TestCase
         $this->assertEquals('foo', $this->apiClient->getRefreshToken()->getToken());
     }
 
-    public function testSetRefreshTokenInstance()
-    {
-        $refreshToken = new RefreshToken('bar');
-        $this->apiClient->setRefreshTokenInstance($refreshToken);
-
-        $this->assertInstanceOf(RefreshToken::class, $this->apiClient->getRefreshToken());
-        $this->assertEquals('bar', $this->apiClient->getRefreshToken()->getToken());
-    }
-
-    public function testGenerateTokensWithoutData()
+    public function testGenerateTokensWithoutDataThrowsException()
     {
         $this->expectException(TokenGenerationException::class);
 
