@@ -12,8 +12,7 @@ class Response
         private readonly int $statusCode,
         private readonly string $content,
         private readonly array $headers
-    )
-    {
+    ) {
     }
 
     public function getStatusCode(): int
@@ -40,7 +39,7 @@ class Response
      * After creating a single record with POST, use this method
      * to get the PID of the newly created record.
      */
-    function getGeneratedPid(): ?string
+    public function getGeneratedPid(): ?string
     {
         $lastElement = $this->getLastElementOfLocationHeader();
 
@@ -55,7 +54,7 @@ class Response
      * After creating multiple records with POST, use this method
      * to get the URL where the newly created elements can be fetched with a new GET request.
      */
-    function getGeneratedListLink(): ?string
+    public function getGeneratedListLink(): ?string
     {
         $lastElement = $this->getLastElementOfLocationHeader();
 
@@ -80,7 +79,7 @@ class Response
 
     private function getLocationHeaderContent(): ?string
     {
-        foreach($this->getHeaders() as $header){
+        foreach($this->getHeaders() as $header) {
             if (str_starts_with(strtolower($header), 'location:')) {
                 return trim(preg_replace('/^.+?:/', '', $header));
             }
