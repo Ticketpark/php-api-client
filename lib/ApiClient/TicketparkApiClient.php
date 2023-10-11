@@ -3,6 +3,7 @@
 namespace Ticketpark\ApiClient;
 
 use Ticketpark\ApiClient\Http\Client;
+use Ticketpark\ApiClient\Http\ClientInterface;
 use Ticketpark\ApiClient\Http\Response;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
 use Ticketpark\ApiClient\Token\AccessToken;
@@ -13,7 +14,7 @@ class TicketparkApiClient
     private const ROOT_URL = 'https://api.ticketpark.ch';
     private const REFRESH_TOKEN_LIFETIME = 30 * 86400;
 
-    private ?Client $client = null;
+    private ?ClientInterface $client = null;
     private ?string $username = null;
     private ?string $password = null;
     private ?RefreshToken $refreshToken = null;
@@ -124,7 +125,12 @@ class TicketparkApiClient
         throw new TokenGenerationException('Failed to generate a access tokens. Make sure to provide a valid refresh token or user credentials.');
     }
 
-    private function getClient(): Client
+    public function setClient(ClientInterface $client): void
+    {
+        $this->client = $client;
+    }
+
+    private function getClient(): ClientInterface
     {
         if (null === $this->client) {
             $this->client = new Client();
@@ -160,7 +166,7 @@ class TicketparkApiClient
         $headers = [
             'Content-Type'  => 'application/x-www-form-urlencoded',
             'Accept'        => 'application/json',
-            'Authorization' => 'Basic '.base64_encode($this->apiKey . ':' . $this->apiSecret)
+            'Authorization' => 'Basic ' . base64_encode($this->apiKey . ':' . $this->apiSecret)
         ];
 
         $response = $this->getClient()->postForm(

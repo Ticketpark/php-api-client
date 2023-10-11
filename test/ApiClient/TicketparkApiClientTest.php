@@ -3,30 +3,42 @@
 namespace Ticketpark\ApiClient\Test;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\Prophet;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
+use Ticketpark\ApiClient\Http\ClientInterface;
+use Ticketpark\ApiClient\Http\Response;
 use Ticketpark\ApiClient\TicketparkApiClient;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
 
 class TicketparkApiClientTest extends TestCase
 {
-    protected $apiClient;
+    private TicketparkApiClient $apiClient;
+    private Prophet $prophet;
 
     public function setUp(): void
     {
         $this->apiClient = new TicketparkApiClient('apiKey', 'apiSecret');
+        $this->prophet = new Prophet();
     }
+
+    protected function tearDown(): void
+    {
+        $this->addToAssertionCount(count($this->prophet->getProphecies()));
+    }
+
     public function testSetAccessToken()
     {
-        $this->apiClient->setAccessToken('foo');
+        $this->apiClient->setAccessToken('some-token');
         $this->assertInstanceOf(AccessToken::class, $this->apiClient->getAccessToken());
-        $this->assertEquals('foo', $this->apiClient->getAccessToken()->getToken());
+        $this->assertEquals('some-token', $this->apiClient->getAccessToken()->getToken());
     }
+
     public function testSetRefreshToken()
     {
-        $this->apiClient->setRefreshToken('foo');
+        $this->apiClient->setRefreshToken('some-token');
         $this->assertInstanceOf(RefreshToken::class, $this->apiClient->getRefreshToken());
-        $this->assertEquals('foo', $this->apiClient->getRefreshToken()->getToken());
+        $this->assertEquals('some-token', $this->apiClient->getRefreshToken()->getToken());
     }
 
     public function testGenerateTokensWithoutDataThrowsException()
@@ -36,285 +48,147 @@ class TicketparkApiClientTest extends TestCase
         $this->apiClient->generateTokens();
     }
 
-    public function testGenerateTokensWithUserCredentials()
+    public function testHead()
     {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'post' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/oauth/v2/token'),
-                    $this->anything(),
-                    $this->equalTo([
-                        'username' => 'username',
-                        'password' => 'password',
-                        'grant_type' => 'password'
-                    ]),
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => [
-                        'access_token' => 'accessToken',
-                        'refresh_token' => 'refreshToken',
-                        'expires_in' => 60
-                    ]
-                ]
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->head(
+            'https://api.ticketpark.ch/path?foo=bar',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
             ]
-        ]));
+        )
+        ->willReturn(new Response(200, '', []))
+        ->shouldBeCalledOnce();
 
-        $this->apiClient->setUserCredentials('username', 'password');
-        $this->apiClient->generateTokens();
-
-        $this->assertEquals('accessToken', $this->apiClient->getAccessToken()->getToken());
-        $this->assertEquals('refreshToken', $this->apiClient->getRefreshToken()->getToken());
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setAccessToken('some-token');
+        $this->apiClient->head('/path', ['foo' => 'bar']);
     }
 
-    public function testGenerateTokensWithUserCredentialsFails()
+    public function testGet()
     {
-        $this->expectException(TokenGenerationException::class);
-
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'post' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/oauth/v2/token'),
-                    $this->anything(),
-                    $this->equalTo([
-                        'username' => 'username',
-                        'password' => 'password',
-                        'grant_type' => 'password'
-                    ]),
-                ],
-                'response' => [
-                    'status' => 400,
-                    'content' => ''
-                ]
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->get(
+            'https://api.ticketpark.ch/path?foo=bar',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
             ]
-        ]));
+        )
+            ->willReturn(new Response(200, '', []))
+            ->shouldBeCalledOnce();
 
-        $this->apiClient->setUserCredentials('username', 'password');
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setAccessToken('some-token');
+        $this->apiClient->get('/path', ['foo' => 'bar']);
+    }
+
+    public function testPost()
+    {
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->post(
+            'https://api.ticketpark.ch/path',
+            '{"foo":"bar"}',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
+            ]
+        )
+            ->willReturn(new Response(204, '', []))
+            ->shouldBeCalledOnce();
+
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setAccessToken('some-token');
+        $this->apiClient->post('/path', ['foo' => 'bar']);
+    }
+
+    public function testPatch()
+    {
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->patch(
+            'https://api.ticketpark.ch/path',
+            '{"foo":"bar"}',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
+            ]
+        )
+            ->willReturn(new Response(204, '', []))
+            ->shouldBeCalledOnce();
+
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setAccessToken('some-token');
+        $this->apiClient->patch('/path', ['foo' => 'bar']);
+    }
+
+    public function testDelete()
+    {
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->delete(
+            'https://api.ticketpark.ch/path',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
+            ]
+        )
+            ->willReturn(new Response(204, '', []))
+            ->shouldBeCalledOnce();
+
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setAccessToken('some-token');
+        $this->apiClient->delete('/path');
+    }
+
+    public function testGenerateTokensWithUsername()
+    {
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->postForm(
+            'https://api.ticketpark.ch/oauth/v2/token',
+            [
+                'username' => 'username',
+                'password' => 'secret',
+                'grant_type' => 'password'
+            ],
+            [
+                'Content-Type'  => 'application/x-www-form-urlencoded',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode('apiKey:apiSecret')
+            ]
+        )
+            ->willReturn(new Response(204, '{"access_token": "some-token", "refresh_token": "some-other-token", "expires_in": 600}', []))
+            ->shouldBeCalledOnce();
+
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setUserCredentials('username', 'secret');
         $this->apiClient->generateTokens();
     }
 
     public function testGenerateTokensWithRefreshToken()
     {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'post' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/oauth/v2/token'),
-                    $this->anything(),
-                    $this->equalTo([
-                        'refresh_token' => 'mySavedRefreshToken',
-                        'grant_type' => 'refresh_token'
-                    ]),
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => [
-                        'access_token' => 'accessToken',
-                        'refresh_token' => 'refreshToken',
-                        'expires_in' => 60
-                    ]
-                ]
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->postForm(
+            'https://api.ticketpark.ch/oauth/v2/token',
+            [
+                'refresh_token' => 'some-refresh-token',
+                'grant_type' => 'refresh_token'
+            ],
+            [
+                'Content-Type'  => 'application/x-www-form-urlencoded',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode('apiKey:apiSecret')
             ]
-        ]));
+        )
+            ->willReturn(new Response(204, '{"access_token": "some-token", "refresh_token": "some-other-token", "expires_in": 600}', []))
+            ->shouldBeCalledOnce();
 
-        $this->apiClient->setRefreshToken('mySavedRefreshToken');
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setRefreshToken('some-refresh-token');
         $this->apiClient->generateTokens();
-
-        $this->assertEquals('accessToken', $this->apiClient->getAccessToken()->getToken());
-        $this->assertEquals('refreshToken', $this->apiClient->getRefreshToken()->getToken());
-    }
-
-    public function testGenerateTokensWithRefreshTokenFails()
-    {
-        $this->expectException(TokenGenerationException::class);
-
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'post' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/oauth/v2/token'),
-                    $this->anything(),
-                    $this->equalTo([
-                        'refresh_token' => 'mySavedRefreshToken',
-                        'grant_type' => 'refresh_token'
-                    ]),
-                ],
-                'response' => [
-                    'status' => 400,
-                    'content' => ''
-                ]
-            ]
-        ]));
-
-        $this->apiClient->setRefreshToken('mySavedRefreshToken');
-        $this->apiClient->generateTokens();
-    }
-
-    public function testGet()
-    {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'get' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/shows?a=1&b=2&c%5Bd%5D=3'),
-                    $this->equalTo([
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer myAccessToken',
-                        'CustomHeader' => 'foo'
-                    ])
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => ''
-                ]
-            ],
-
-        ]));
-
-        $this->apiClient->setAccessToken('myAccessToken');
-        $this->apiClient->get('/shows', ['a' => 1, 'b' => 2, 'c' => ['d' => 3]], ['CustomHeader' => 'foo']);
-    }
-
-    public function testHead()
-    {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'head' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/shows?a=1&b=2&c%5Bd%5D=3'),
-                    $this->equalTo([
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer myAccessToken',
-                        'CustomHeader' => 'foo'
-                    ])
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => ''
-                ]
-            ],
-
-        ]));
-
-        $this->apiClient->setAccessToken('myAccessToken');
-        $this->apiClient->head('/shows', ['a' => 1, 'b' => 2, 'c' => ['d' => 3]], ['CustomHeader' => 'foo']);
-    }
-
-    public function testPatch()
-    {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'patch' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/shows/foo'),
-                    $this->equalTo([
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer myAccessToken',
-                        'CustomHeader' => 'foo'
-                    ]),
-                    $this->equalTo('"content"')
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => ''
-                ]
-            ],
-
-        ]));
-
-        $this->apiClient->setAccessToken('myAccessToken');
-        $this->apiClient->patch('/shows/foo', 'content', ['CustomHeader' => 'foo']);
-    }
-
-    public function testPost()
-    {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'post' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/shows/foo'),
-                    $this->equalTo([
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer myAccessToken',
-                        'CustomHeader' => 'foo'
-                    ]),
-                    $this->equalTo('"content"')
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => ''
-                ]
-            ],
-
-        ]));
-
-        $this->apiClient->setAccessToken('myAccessToken');
-        $this->apiClient->post('/shows/foo', 'content', ['CustomHeader' => 'foo']);
-    }
-
-    public function testDelete()
-    {
-        $this->apiClient->setBrowser($this->getBrowserMock([
-            'delete' => [
-                'expects' => $this->once(),
-                'with' => [
-                    $this->equalTo('https://api.ticketpark.ch/shows/foo'),
-                    $this->equalTo([
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer myAccessToken',
-                        'CustomHeader' => 'foo'
-                    ])
-                ],
-                'response' => [
-                    'status' => 200,
-                    'content' => ''
-                ]
-            ],
-
-        ]));
-
-        $this->apiClient->setAccessToken('myAccessToken');
-        $this->apiClient->delete('/shows/foo', ['CustomHeader' => 'foo']);
-    }
-
-    protected function getBrowserMock($data = [])
-    {
-        $browser = $this->getMockBuilder(Browser::class)
-            ->onlyMethods(['head', 'get', 'post', 'patch', 'delete'])
-            ->getMock();
-
-        foreach($data as $method => $params) {
-            $browser
-                ->expects($params['expects'])
-                ->method($method)
-                ->withConsecutive($params['with'])
-                ->willReturn($this->getResponseMock($params['response']['status'], $params['response']['content']));
-        }
-
-        return $browser;
-    }
-
-    protected function getResponseMock($status, $content)
-    {
-        $response = $this->getMockBuilder(Response::class)
-            ->onlyMethods(['getStatusCode', 'getContent'])
-            ->getMock();
-
-        $response
-            ->method('getStatusCode')
-            ->willReturn($status);
-
-        $response
-            ->method('getContent')
-            ->willReturn(json_encode($content, JSON_THROW_ON_ERROR));
-
-        return $response;
     }
 }

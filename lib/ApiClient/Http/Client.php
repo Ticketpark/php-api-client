@@ -8,7 +8,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
-final class Client
+final class Client implements ClientInterface
 {
     private GuzzleClient $guzzle;
 
