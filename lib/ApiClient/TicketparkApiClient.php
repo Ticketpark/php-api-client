@@ -6,6 +6,7 @@ use Ticketpark\ApiClient\Http\Client;
 use Ticketpark\ApiClient\Http\ClientInterface;
 use Ticketpark\ApiClient\Http\Response;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
+use Ticketpark\ApiClient\Http\UnexpectedResponseException;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
 
@@ -180,6 +181,10 @@ class TicketparkApiClient
         }
 
         $content = $response->getContent();
+
+        if (!isset($content['access_token']) || !isset($content['refresh_token']) || !isset($content['expires_in'])) {
+            throw new UnexpectedResponseException('Generating tokens did not receive the expected http response.');
+        }
 
         $this->accessToken = new AccessToken(
             $content['access_token'],

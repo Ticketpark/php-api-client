@@ -7,6 +7,7 @@ use Prophecy\Prophet;
 use Ticketpark\ApiClient\Exception\TokenGenerationException;
 use Ticketpark\ApiClient\Http\ClientInterface;
 use Ticketpark\ApiClient\Http\Response;
+use Ticketpark\ApiClient\Http\UnexpectedResponseException;
 use Ticketpark\ApiClient\TicketparkApiClient;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
@@ -189,6 +190,32 @@ class TicketparkApiClientTest extends TestCase
 
         $this->apiClient->setClient($httpClient->reveal());
         $this->apiClient->setRefreshToken('some-refresh-token');
+        $this->apiClient->generateTokens();
+    }
+
+    public function testGenerateTokensThrowsExceptionOnUnexpectedResponse()
+    {
+        $this->expectException(UnexpectedResponseException::class);
+
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->postForm(
+            'https://api.ticketpark.ch/oauth/v2/token',
+            [
+                'username' => 'username',
+                'password' => 'secret',
+                'grant_type' => 'password'
+            ],
+            [
+                'Content-Type'  => 'application/x-www-form-urlencoded',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode('apiKey:apiSecret')
+            ]
+        )
+            ->willReturn(new Response(204, '{}', []))
+            ->shouldBeCalledOnce();
+
+        $this->apiClient->setClient($httpClient->reveal());
+        $this->apiClient->setUserCredentials('username', 'secret');
         $this->apiClient->generateTokens();
     }
 }
