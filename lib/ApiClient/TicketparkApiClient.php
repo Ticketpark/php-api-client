@@ -12,7 +12,7 @@ use Ticketpark\ApiClient\Token\RefreshToken;
 
 class TicketparkApiClient
 {
-    private const ROOT_URL = 'https://api.ticketpark.ch';
+    public const ROOT_URL = 'https://api.ticketpark.ch';
     private const REFRESH_TOKEN_LIFETIME = 30 * 86400;
 
     private ?ClientInterface $client = null;
