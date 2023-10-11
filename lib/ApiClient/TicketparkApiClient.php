@@ -2,11 +2,11 @@
 
 namespace Ticketpark\ApiClient;
 
+use Ticketpark\ApiClient\Exception\TokenGenerationException;
+use Ticketpark\ApiClient\Exception\UnexpectedResponseException;
 use Ticketpark\ApiClient\Http\Client;
 use Ticketpark\ApiClient\Http\ClientInterface;
 use Ticketpark\ApiClient\Http\Response;
-use Ticketpark\ApiClient\Exception\TokenGenerationException;
-use Ticketpark\ApiClient\Http\UnexpectedResponseException;
 use Ticketpark\ApiClient\Token\AccessToken;
 use Ticketpark\ApiClient\Token\RefreshToken;
 

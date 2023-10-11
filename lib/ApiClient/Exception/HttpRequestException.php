@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ticketpark\ApiClient\Http;
+namespace Ticketpark\ApiClient\Exception;
 
 class HttpRequestException extends \Exception
 {

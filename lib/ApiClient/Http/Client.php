@@ -7,6 +7,7 @@ namespace Ticketpark\ApiClient\Http;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Ticketpark\ApiClient\Exception\HttpRequestException;
 
 final class Client implements ClientInterface
 {
