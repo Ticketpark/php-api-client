@@ -6,8 +6,10 @@ namespace Ticketpark\ApiClient\Http;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Ticketpark\ApiClient\Exception\HttpRequestException;
+use Ticketpark\ApiClient\Exception\HttpTimeOutException;
 
 final class Client implements ClientInterface
 {
@@ -63,16 +65,21 @@ final class Client implements ClientInterface
                 [
                     'headers' => $headers,
                     'body' => $content,
-                    'form_params' => $formData
+                    'form_params' => $formData,
+                    'timeout' => 30
                 ]
             );
-        } catch (\Exception $e) {
-            if (!$e instanceof ClientException) {
-                throw new HttpRequestException($e->getMessage());
+        } catch (ConnectException $e) {
+            if (str_contains($e->getMessage(), 'cURL error 28')) {
+                throw new HttpTimeOutException();
             }
 
+        } catch (ClientException $e) {
             /** @var GuzzleResponse $response */
             $guzzleResponse = $e->getResponse();
+
+        } catch (\Exception $e) {
+            throw new HttpRequestException($e->getMessage());
         }
 
         return new Response(
