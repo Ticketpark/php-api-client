@@ -1,16 +1,18 @@
 # Ticketpark PHP API Client
 
-A basic api client to consume the Ticketpark REST API.
+A PHP client to consume the Ticketpark REST API.
 
 ## Installation
 
-Simply add this library to your composer.json:
+Add this library to your composer.json:
 
 ```
 composer require ticketpark/php-api-client
 ```
 
 ## Usage
+
+Also see `example.php`.
 
 ### Getting data (GET)
 
@@ -77,5 +79,5 @@ if ($response->isSuccessful()) {
 
 
 ## User credentials
-Get in touch with us to get your user credentials:
-[tech@ticketpark.ch](mailto:tech@ticketpark.ch), [www.ticketpark.ch](http://www.ticketpark.ch)
+Get in touch with us to get your user credentials:<br>
+[support@ticketpark.ch](mailto:support@ticketpark.ch)
