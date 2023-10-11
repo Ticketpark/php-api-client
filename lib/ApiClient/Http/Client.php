@@ -58,17 +58,29 @@ final class Client implements ClientInterface
         array $formData = []
     ): Response {
         try {
-            /** @var GuzzleResponse $response */
-            $guzzleResponse = $this->guzzle->request(
-                $method,
-                $url,
-                [
-                    'headers' => $headers,
-                    'body' => $content,
-                    'form_params' => $formData,
-                    'timeout' => 30
-                ]
-            );
+            if ($formData) {
+                /** @var GuzzleResponse $response */
+                $guzzleResponse = $this->guzzle->request(
+                    $method,
+                    $url,
+                    [
+                        'headers' => $headers,
+                        'form_params' => $formData,
+                        'timeout' => 30
+                    ]
+                );
+            } else {
+                /** @var GuzzleResponse $response */
+                $guzzleResponse = $this->guzzle->request(
+                    $method,
+                    $url,
+                    [
+                        'headers' => $headers,
+                        'body' => $content,
+                        'timeout' => 30
+                    ]
+                );
+            }
         } catch (ConnectException $e) {
             if (str_contains($e->getMessage(), 'cURL error 28')) {
                 throw new HttpTimeOutException();
