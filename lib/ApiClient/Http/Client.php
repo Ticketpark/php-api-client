@@ -13,7 +13,7 @@ use Ticketpark\ApiClient\Exception\HttpTimeOutException;
 
 final class Client implements ClientInterface
 {
-    private GuzzleClient $guzzle;
+    private readonly GuzzleClient $guzzle;
 
     public function __construct()
     {

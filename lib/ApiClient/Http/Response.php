@@ -22,7 +22,7 @@ class Response
 
     public function getContent(): array
     {
-        return json_decode($this->content, true);
+        return json_decode($this->content, true, 512, JSON_THROW_ON_ERROR);
     }
 
     public function getHeaders(): array
@@ -80,8 +80,8 @@ class Response
     private function getLocationHeaderContent(): ?string
     {
         foreach($this->getHeaders() as $header) {
-            if (str_starts_with(strtolower($header), 'location:')) {
-                return trim(preg_replace('/^.+?:/', '', $header));
+            if (str_starts_with(strtolower((string) $header), 'location:')) {
+                return trim(preg_replace('/^.+?:/', '', (string) $header));
             }
         }
 
