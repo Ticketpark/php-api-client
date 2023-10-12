@@ -78,9 +78,9 @@ class Response
 
     private function getLocationHeaderContent(): ?string
     {
-        foreach($this->getHeaders() as $header) {
-            if (str_starts_with(strtolower((string) $header), 'location:')) {
-                return trim(preg_replace('/^.+?:/', '', (string) $header));
+        foreach($this->getHeaders() as $key => $content) {
+            if (strtolower($key) === 'location') {
+                return trim($content[0]);
             }
         }
 

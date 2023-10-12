@@ -66,8 +66,9 @@ class ResponseTest extends TestCase
         $response = new Response(
             204,
             '',
-            [   'Some-Header: something',
-                'Location: https://api.ticketpark.ch/some-entity/some-uuid'
+            [
+                'Some-Header' => ['something'],
+                'Location' => ['https://api.ticketpark.ch/some-entity/some-uuid']
             ]
         );
 
@@ -80,7 +81,7 @@ class ResponseTest extends TestCase
             204,
             '',
             [
-                'Some-Header: something'
+                'Some-Header' => ['something']
             ]
         );
 
@@ -93,8 +94,8 @@ class ResponseTest extends TestCase
             204,
             '',
             [
-                'Some-Header: something',
-                'Location: https://api.ticketpark.ch/some-entity/filters[batchId]=some-uuid&orderBy[batchOrder]=asc'
+                'Some-Header' => ['something'],
+                'Location' => ['https://api.ticketpark.ch/some-entity/filters[batchId]=some-uuid&orderBy[batchOrder]=asc']
             ]
         );
 
@@ -106,8 +107,9 @@ class ResponseTest extends TestCase
         $response = new Response(
             204,
             '',
-            [   'Some-Header: something',
-                'Location: https://api.ticketpark.ch/some-entity/filters[batchId]=some-uuid&orderBy[batchOrder]=asc'
+            [
+                'Some-Header' => ['something'],
+                'Location' => ['https://api.ticketpark.ch/some-entity/filters[batchId]=some-uuid&orderBy[batchOrder]=asc']
             ]
         );
 
@@ -120,7 +122,7 @@ class ResponseTest extends TestCase
             204,
             '',
             [
-                'Some-Header: something',
+                'Some-Header' => ['something']
             ]
         );
 
@@ -133,8 +135,8 @@ class ResponseTest extends TestCase
             204,
             '',
             [
-                'Some-Header: something',
-                'Location: https://api.ticketpark.ch/some-entity/some-uuid'
+                'Some-Header' => ['something'],
+                'Location' => ['https://api.ticketpark.ch/some-entity/some-uuid']
             ]
         );
 
