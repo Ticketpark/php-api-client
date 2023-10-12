@@ -58,29 +58,14 @@ final class Client implements ClientInterface
         array $formData = []
     ): Response {
         try {
-            if ($formData) {
-                /** @var GuzzleResponse $response */
-                $guzzleResponse = $this->guzzle->request(
-                    $method,
-                    $url,
-                    [
-                        'headers' => $headers,
-                        'form_params' => $formData,
-                        'timeout' => 30
-                    ]
-                );
-            } else {
-                /** @var GuzzleResponse $response */
-                $guzzleResponse = $this->guzzle->request(
-                    $method,
-                    $url,
-                    [
-                        'headers' => $headers,
-                        'body' => $content,
-                        'timeout' => 30
-                    ]
-                );
-            }
+            $guzzleResponse = $this->doExecute(
+                $method,
+                $url,
+                $headers,
+                $content,
+                $formData
+            );
+
         } catch (ConnectException $e) {
             if (str_contains($e->getMessage(), 'cURL error 28')) {
                 throw new HttpTimeOutException();
@@ -99,5 +84,33 @@ final class Client implements ClientInterface
             (string) $guzzleResponse->getBody(),
             $guzzleResponse->getHeaders()
         );
+    }
+
+    private function doExecute(
+        string $method,
+        string $url,
+        array $headers,
+        ?string $content,
+        array $formData
+    ): GuzzleResponse {
+        $requestData = [
+            'headers' => $headers,
+            'timeout' => 30
+        ];
+
+        if ($formData) {
+            $requestData['form_params'] = $formData;
+        } else {
+            $requestData['body'] = $content;
+        }
+
+        /** @var GuzzleResponse $response */
+        $guzzleResponse = $this->guzzle->request(
+            $method,
+            $url,
+            $requestData
+        );
+
+        return $guzzleResponse;
     }
 }
