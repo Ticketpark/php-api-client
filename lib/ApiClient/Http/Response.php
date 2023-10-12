@@ -59,7 +59,6 @@ class Response
         $lastElement = $this->getLastElementOfLocationHeader();
 
         if ($lastElement && str_contains($lastElement, 'batchId')) {
-
             return str_replace(TicketparkApiClient::ROOT_URL, '', $this->getLocationHeaderContent());
         }
 
