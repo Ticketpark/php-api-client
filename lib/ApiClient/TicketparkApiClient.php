@@ -38,9 +38,9 @@ class TicketparkApiClient
         return $this->accessToken;
     }
 
-    public function setAccessToken(string $accessToken): void
+    public function setAccessToken(string $accessToken, ?\DateTime $expiration = null): void
     {
-        $this->accessToken = new AccessToken($accessToken);
+        $this->accessToken = new AccessToken($accessToken, $expiration);
     }
 
     public function getRefreshToken(): ?RefreshToken
@@ -48,9 +48,9 @@ class TicketparkApiClient
         return $this->refreshToken;
     }
 
-    public function setRefreshToken(string $refreshToken): void
+    public function setRefreshToken(string $refreshToken, ?\DateTime $expiration = null): void
     {
-        $this->refreshToken = new RefreshToken($refreshToken);
+        $this->refreshToken = new RefreshToken($refreshToken, $expiration);
     }
 
     public function head(string $path, array $parameters = []): Response

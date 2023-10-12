@@ -30,16 +30,22 @@ class TicketparkApiClientTest extends TestCase
 
     public function testSetAccessToken()
     {
-        $this->apiClient->setAccessToken('some-token');
+        $expiration = new \DateTime('2035-01-01 12:00:00');
+        $this->apiClient->setAccessToken('some-token', $expiration);
+        
         $this->assertInstanceOf(AccessToken::class, $this->apiClient->getAccessToken());
         $this->assertEquals('some-token', $this->apiClient->getAccessToken()->getToken());
+        $this->assertEquals($expiration, $this->apiClient->getAccessToken()->getExpiration());
     }
 
     public function testSetRefreshToken()
     {
-        $this->apiClient->setRefreshToken('some-token');
+        $expiration = new \DateTime('2035-01-01 12:00:00');
+        $this->apiClient->setRefreshToken('some-token', $expiration);
+
         $this->assertInstanceOf(RefreshToken::class, $this->apiClient->getRefreshToken());
         $this->assertEquals('some-token', $this->apiClient->getRefreshToken()->getToken());
+        $this->assertEquals($expiration, $this->apiClient->getRefreshToken()->getExpiration());
     }
 
     public function testGenerateTokensWithoutDataThrowsException()
