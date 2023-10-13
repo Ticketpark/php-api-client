@@ -81,6 +81,6 @@ if ($response->isSuccessful()) {
 ```
 
 
-## User credentials
-Get in touch with us to get your user credentials:<br>
+## API credentials
+Get in touch to get your API credentials:<br>
 [support@ticketpark.ch](mailto:support@ticketpark.ch)
