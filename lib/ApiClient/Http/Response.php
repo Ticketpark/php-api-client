@@ -22,6 +22,10 @@ class Response
 
     public function getContent(): array
     {
+    	if (!$this->content) {
+    		return [];
+    	}
+        
         return json_decode($this->content, true, 512, JSON_THROW_ON_ERROR);
     }
 
