@@ -22,10 +22,10 @@ class Response
 
     public function getContent(): array
     {
-    	if (!$this->content) {
-    		return [];
-    	}
-        
+        if (!$this->content) {
+            return [];
+        }
+
         return json_decode($this->content, true, 512, JSON_THROW_ON_ERROR);
     }
 
@@ -82,7 +82,7 @@ class Response
 
     private function getLocationHeaderContent(): ?string
     {
-        foreach($this->getHeaders() as $key => $content) {
+        foreach ($this->getHeaders() as $key => $content) {
             if (strtolower($key) === 'location') {
                 return trim($content[0]);
             }
