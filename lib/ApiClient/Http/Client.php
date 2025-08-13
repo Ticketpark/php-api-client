@@ -15,9 +15,9 @@ final class Client implements ClientInterface
 {
     private readonly GuzzleClient $guzzle;
 
-    public function __construct()
+    public function __construct(array $guzzleConfig = [])
     {
-        $this->guzzle = new GuzzleClient();
+        $this->guzzle = new GuzzleClient($guzzleConfig);
     }
 
     public function head(string $url, array $headers): Response

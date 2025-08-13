@@ -23,7 +23,8 @@ class TicketparkApiClient
 
     public function __construct(
         private readonly string $apiKey,
-        private readonly string $apiSecret
+        private readonly string $apiSecret,
+        private readonly string $baseUrl = self::ROOT_URL,
     ) {
     }
 
@@ -147,7 +148,7 @@ class TicketparkApiClient
             $params = '?' . http_build_query($parameters);
         }
 
-        return self::ROOT_URL . $path . $params;
+        return $this->baseUrl . $path . $params;
     }
 
     private function getValidAccessToken(): string
