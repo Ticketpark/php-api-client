@@ -224,4 +224,29 @@ class TicketparkApiClientTest extends TestCase
         $this->apiClient->setUserCredentials('username', 'secret');
         $this->apiClient->generateTokens();
     }
+
+    public function testGetWithOverwrittenBaseUrl()
+    {
+        $httpClient = $this->prophet->prophesize(ClientInterface::class);
+        $httpClient->get(
+            'https://overwritten.ticketpark.ch/path?foo=bar',
+            [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer some-token'
+            ]
+        )
+            ->willReturn(new Response(200, '', []))
+            ->shouldBeCalledOnce();
+
+        $apiClient = new TicketparkApiClient(
+            'apiKey',
+            'apiSecret',
+            'https://overwritten.ticketpark.ch'
+        );
+
+        $apiClient->setClient($httpClient->reveal());
+        $apiClient->setAccessToken('some-token');
+        $apiClient->get('/path', ['foo' => 'bar']);
+    }
 }
