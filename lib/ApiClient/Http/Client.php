@@ -11,9 +11,9 @@ use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Ticketpark\ApiClient\Exception\HttpRequestException;
 use Ticketpark\ApiClient\Exception\HttpTimeOutException;
 
-final class Client implements ClientInterface
+final readonly class Client implements ClientInterface
 {
-    private readonly GuzzleClient $guzzle;
+    private GuzzleClient $guzzle;
 
     public function __construct(array $guzzleConfig = [])
     {
@@ -54,7 +54,7 @@ final class Client implements ClientInterface
         string $method,
         string $url,
         array $headers = [],
-        string $content = null,
+        ?string $content = null,
         array $formData = []
     ): Response {
         try {
@@ -70,6 +70,8 @@ final class Client implements ClientInterface
             if (str_contains($e->getMessage(), 'cURL error 28')) {
                 throw new HttpTimeOutException();
             }
+
+            throw new HttpRequestException($e->getMessage());
 
         } catch (ClientException $e) {
             /** @var GuzzleResponse $response */

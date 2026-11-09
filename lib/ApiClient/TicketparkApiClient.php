@@ -12,7 +12,7 @@ use Ticketpark\ApiClient\Token\RefreshToken;
 
 class TicketparkApiClient
 {
-    final public const ROOT_URL = 'https://api.ticketpark.ch';
+    final public const string ROOT_URL = 'https://api.ticketpark.ch';
     private const REFRESH_TOKEN_LIFETIME = 30 * 86400;
 
     private ?ClientInterface $client = null;
@@ -134,9 +134,7 @@ class TicketparkApiClient
 
     private function getClient(): ClientInterface
     {
-        if (null === $this->client) {
-            $this->client = new Client();
-        }
+        $this->client ??= new Client();
 
         return $this->client;
     }
@@ -189,12 +187,12 @@ class TicketparkApiClient
 
         $this->accessToken = new AccessToken(
             $content['access_token'],
-            (new \DateTime())->setTimestamp(time() + $content['expires_in'])
+            new \DateTime()->setTimestamp(time() + $content['expires_in'])
         );
 
         $this->refreshToken = new RefreshToken(
             $content['refresh_token'],
-            (new \DateTime())->setTimestamp(time() + self::REFRESH_TOKEN_LIFETIME)
+            new \DateTime()->setTimestamp(time() + self::REFRESH_TOKEN_LIFETIME)
         );
 
         return true;

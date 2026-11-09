@@ -4,7 +4,7 @@ namespace Ticketpark\ApiClient\Token;
 
 abstract class Token
 {
-    private const TIMEOUT_BUFFER = 10;
+    private const int TIMEOUT_BUFFER = 10;
 
     public function __construct(
         private readonly string $token,
