@@ -1,6 +1,6 @@
 # Ticketpark PHP API Client
 
-[![Build Status](https://github.com/Ticketpark/php-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/sprain/php-swiss-qr-bill/actions)
+[![Build Status](https://github.com/Ticketpark/php-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/Ticketpark/php-api-clien/actions)
 
 
 A PHP client to consume the Ticketpark REST API.
