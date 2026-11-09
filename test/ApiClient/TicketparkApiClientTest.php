@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ticketpark\ApiClient\Test;
 
 use PHPUnit\Framework\TestCase;
@@ -25,6 +27,7 @@ class TicketparkApiClientTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->prophet->checkPredictions();
         $this->addToAssertionCount(count($this->prophet->getProphecies()));
     }
 

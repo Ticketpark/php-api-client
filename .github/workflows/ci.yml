@@ -36,7 +36,7 @@ jobs:
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit --verbose
+        run: vendor/bin/phpunit
 
       - name: Check coding standard
         run: vendor/bin/php-cs-fixer --no-interaction --dry-run --diff -v fix lib/
